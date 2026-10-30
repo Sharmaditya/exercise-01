@@ -43,8 +43,12 @@ public class BookInfo {
             @RequestBody HttpServletRequest request, XStreamMarshaller xstreamMarshaller, String level) {
         try {
             XStream xstream = xstreamMarshaller.getXStream();
+            xstream.clearPermissions();
+            xstream.addPermission(NoTypePermission.NONE);
+            xstream.allowTypes(new Class<?>[] { Book.class });
             InputStream in = request.getInputStream();
             Book book = (Book) xstream.fromXML(in);
+            
             BookEntity bookEntity = new BookEntity(book, level);
             bookEntityRepository.save(bookEntity);
             return new ResponseEntity<GenericVulnerabilityResponseBean<Book>>(
